@@ -2,6 +2,7 @@ const inputNameEl = document.getElementById("name")
 const inputTaskEl = document.getElementById("task")
 const buttonEl = document.getElementById("append")
 const resultEl = document.getElementById("result")
+const formEl = document.getElementById("form")
 
 const list = []
 
@@ -13,7 +14,8 @@ class Tasks {
     }
 }
 
-buttonEl.addEventListener('click', () => {
+formEl.addEventListener('submit', (e) => {
+    e.preventDefault()
     const name = inputNameEl.value
     const task = inputTaskEl.value
     const item = new Tasks(name, task, Math.random())
@@ -26,18 +28,22 @@ buttonEl.addEventListener('click', () => {
 const renderList = () => {
     resultEl.innerHTML = ''
 
-    for (let item of list) {
+    list.forEach((item, index) => {
         const el = document.createElement('div')
-        // el.innerHTML = `
-        // <p>Название задачи: ${item.name}; Суть задачи: ${item.task}
-        // <button id="${item.id}">
-        // Удалить
-        // </button>
-        //
-        // </p>`
+        let buttonsUpDown = ''
+        if (index === 0) {
+        buttonsUpDown = buttonsUpDown + `<button>Вниз</button>`
+        }
+        else if (index === (list.length-1)){
+            buttonsUpDown = buttonsUpDown + `<button>Вверх</button>`
+        }
+        else {
+            buttonsUpDown = buttonsUpDown + `<button>Вверх</button> <button>Вниз</button>`
+        }
 
         el.innerHTML = `
-        <div class="alert alert-secondary" role="alert">Название задачи: ${item.name}; Суть задачи: ${item.task}
+        <div class="alert alert-secondary" role="alert">Название задачи: ${item.name}; Суть задачи: ${item.task} ${buttonsUpDown}
+
         <button id="${item.id}" type="button" class="btn btn-danger">
         Удалить
         </button>
@@ -55,5 +61,26 @@ const renderList = () => {
 
             renderList()
         })
-    }
+
+        let buttonUpDownEl =
+        // обработчик вверх/вниз
+    })
+
 }
+
+// const swap = () =>{
+//     for (let item of list){
+//         if
+//     }
+// }
+
+// const a = {
+//     "1": 1,
+//     "name": "some name"
+// }
+//
+// console.log(JSON.stringify(a))
+
+// localStorage.setItem('key1', 'value1')
+// // localStorage.removeItem('key1')
+// console.log(localStorage.getItem('key1'));

@@ -1,10 +1,10 @@
 const inputNameEl = document.getElementById("name")
 const inputTaskEl = document.getElementById("task")
-const buttonEl = document.getElementById("append")
+const deleteAllButtonEl = document.getElementById("deleteAll")
 const resultEl = document.getElementById("result")
 const formEl = document.getElementById("form")
 
-const list = []
+let list = []
 
 class Tasks {
     constructor(name, task, id) {
@@ -16,13 +16,22 @@ class Tasks {
 
 formEl.addEventListener('submit', (e) => {
     e.preventDefault()
+
     const name = inputNameEl.value
     const task = inputTaskEl.value
     const item = new Tasks(name, task, Math.random())
-    list.push(item)
+
+    list.unshift(item)
 
     renderList()
+})
 
+deleteAllButtonEl.addEventListener('click', () =>{
+    list.length = 0
+
+    localStorage.clear()
+
+    renderList()
 })
 
 const renderList = () => {
@@ -30,15 +39,15 @@ const renderList = () => {
 
     list.forEach((item, index) => {
         const el = document.createElement('div')
+
         let buttonsUpDown = ''
+
         if (index === 0) {
-        buttonsUpDown = buttonsUpDown + `<button>Вниз</button>`
-        }
-        else if (index === (list.length-1)){
-            buttonsUpDown = buttonsUpDown + `<button>Вверх</button>`
-        }
-        else {
-            buttonsUpDown = buttonsUpDown + `<button>Вверх</button> <button>Вниз</button>`
+            buttonsUpDown = buttonsUpDown + `<button id="down">Вниз</button>`
+        } else if (index === (list.length - 1)) {
+            buttonsUpDown = buttonsUpDown + `<button id="up">Вверх</button>`
+        } else {
+            buttonsUpDown = buttonsUpDown + `<button id="up">Вверх</button> <button id="down">Вниз</button>`
         }
 
         el.innerHTML = `
@@ -51,9 +60,10 @@ const renderList = () => {
         </div>`
 
         resultEl.appendChild(el)
+
         const deleteButtonEl = document.getElementById(item.id)
 
-        deleteButtonEl.addEventListener('click', () =>{
+        deleteButtonEl.addEventListener('click', () => {
 
             let index = list.findIndex(el => el.id === item.id)
 
@@ -62,25 +72,27 @@ const renderList = () => {
             renderList()
         })
 
-        let buttonUpDownEl =
-        // обработчик вверх/вниз
+        const buttonUpEl = el.querySelector('#up')
+        const buttonDownEl = el.querySelector('#down')
+        if (index !== 0) {
+            buttonUpEl.addEventListener('click', () => {
+                [list[index], list[index - 1]] = [list[index - 1], list[index]]
+                renderList()
+            })
+        }
+        if (index !== (list.length-1)) {
+            buttonDownEl.addEventListener('click', () => {
+                [list[index], list[index + 1]] = [list[index + 1], list[index]]
+                renderList()
+            })
+        }
     })
-
+    localStorage.setItem('task', JSON.stringify(list)) // САМЫЙ ПРОСТОЙ СПОСОБ
 }
 
-// const swap = () =>{
-//     for (let item of list){
-//         if
-//     }
-// }
+if (localStorage.getItem('task') !== null){
+    list = JSON.parse(localStorage.getItem('task'))
+    renderList()
+}
 
-// const a = {
-//     "1": 1,
-//     "name": "some name"
-// }
-//
-// console.log(JSON.stringify(a))
-
-// localStorage.setItem('key1', 'value1')
-// // localStorage.removeItem('key1')
-// console.log(localStorage.getItem('key1'));
+console.log(localStorage.getItem('task'));
